@@ -4,11 +4,13 @@ Created on Thu Apr  7 23:29:00 2022
 
 @author: jenna
 """
+import glob
+import os.path
+
 import mne
-import pathlib
 
 #see https://mne.tools/dev/auto_tutorials/raw/10_raw_overview.html#the-raw-info-attribute
-def print_patient_info(filename, raw):
+def print_patient_info(raw):
   # raw.info
   n_time_stamps = raw.n_times
   time_secs = raw.times
@@ -25,7 +27,7 @@ def print_patient_info(filename, raw):
 
   print(raw.info)
 
-def annotate_patient_info(filename, raw):
+def annotate_patient_info(file, raw):
     patient_annotations = mne.Annotations(onset=
                                           [0, 60, 61, 121, 122, 127, 128, 133, 134, 139, 140, 145, 146, 151, 152, 157,
                                            158, 163, 164, 169, 170, 175, 176, 181, 182, 187, 188, 193, 194, 199, 200,
@@ -48,86 +50,86 @@ def annotate_patient_info(filename, raw):
                                           # , 589],
                                           duration=
                                           [60, 1, 60, 1, 5,  # eye open, eye close, A
-                                           1, 5, 1, 5, 1, 5,  # black screen x2, B
-                                           1, 5, 1, 5, 1, 5,  # black screen x2, C
-                                           1, 5, 1, 5, 1, 5,  # black screen x2, D
-                                           1, 5, 1, 5, 1, 5,  # black screen x2, E
-                                           1, 5, 1, 5, 1, 5,  # black screen x2, F
-                                           1, 5, 1, 5, 1, 5,  # black screen x2, G
-                                           1, 5, 1, 5, 1, 5,  # black screen x2, H
-                                           1, 5, 1, 5, 1, 5,  # black screen x2, I
-                                           1, 5, 1, 5, 1, 5,  # black screen x2, J
-                                           1, 5, 1, 5, 1, 5,  # black screen x2, K
-                                           1, 5, 1, 5, 1, 5,  # black screen x2, L
-                                           1, 5, 1, 5, 1, 5,  # black screen x2, M
-                                           1, 5, 1, 5, 1, 5,  # black screen x2, N
-                                           1, 5, 1, 5, 1, 5,  # black screen x2, O
-                                           1, 5, 1, 5, 1, 5,  # black screen x2, P
-                                           1, 5, 1, 5, 1, 5,  # black screen x2, Q
-                                           1, 5, 1, 5, 1, 5,  # black screen x2, R
-                                           1, 5, 1, 5, 1, 5,  # black screen x2, S
-                                           1, 5, 1, 5, 1, 5,  # black screen x2, T
-                                           1, 5, 1, 5, 1, 5,  # black screen x2, U
-                                           1, 5, 1, 5, 1, 5,  # black screen x2, V
-                                           1, 5, 1, 5, 1, 5,  # black screen x2, W
-                                           1, 5, 1, 5, 1, 5,  # black screen x2, X
-                                           1, 5, 1, 5, 1, 5,  # black screen x2, Y
-                                           1, 5, 1, 5, 1, 5,  # black screen x2, Z
-                                           1, 5, 1, 5  # black screen x2
+                                           1, 5, 1, 5, 1, 5,  # black screen, imagined letter A, B
+                                           1, 5, 1, 5, 1, 5,  # black screen, imagined letter B, C
+                                           1, 5, 1, 5, 1, 5,  # black screen, imagined letter C, D
+                                           1, 5, 1, 5, 1, 5,  # black screen, imagined letter D, E
+                                           1, 5, 1, 5, 1, 5,  # black screen, imagined letter E, F
+                                           1, 5, 1, 5, 1, 5,  # black screen, imagined letter F, G
+                                           1, 5, 1, 5, 1, 5,  # black screen, imagined letter G, H
+                                           1, 5, 1, 5, 1, 5,  # black screen, imagined letter H, I
+                                           1, 5, 1, 5, 1, 5,  # black screen, imagined letter I, J
+                                           1, 5, 1, 5, 1, 5,  # black screen, imagined letter J, K
+                                           1, 5, 1, 5, 1, 5,  # black screen, imagined letter K, L
+                                           1, 5, 1, 5, 1, 5,  # black screen, imagined letter L, M
+                                           1, 5, 1, 5, 1, 5,  # black screen, imagined letter M, N
+                                           1, 5, 1, 5, 1, 5,  # black screen, imagined letter N, O
+                                           1, 5, 1, 5, 1, 5,  # black screen, imagined letter O, P
+                                           1, 5, 1, 5, 1, 5,  # black screen, imagined letter P, Q
+                                           1, 5, 1, 5, 1, 5,  # black screen, imagined letter Q, R
+                                           1, 5, 1, 5, 1, 5,  # black screen, imagined letter R, S
+                                           1, 5, 1, 5, 1, 5,  # black screen, imagined letter S, T
+                                           1, 5, 1, 5, 1, 5,  # black screen, imagined letter T, U
+                                           1, 5, 1, 5, 1, 5,  # black screen, imagined letter U, V
+                                           1, 5, 1, 5, 1, 5,  # black screen, imagined letter V, W
+                                           1, 5, 1, 5, 1, 5,  # black screen, imagined letter W, X
+                                           1, 5, 1, 5, 1, 5,  # black screen, imagined letter X, Y
+                                           1, 5, 1, 5, 1, 5,  # black screen, imagined letter Y, Z
+                                           1, 5, 1, 5  # black screen, imagined letter Z
                                            ],
                                           description=
                                           ['Eye Open', 'transition', 'Eye Closed', 'transition', 'A',
-                                           'transition', 'Black Screen', 'transition', 'Black Screen', 'transition',
+                                           'transition', 'Black Screen', 'transition', 'Imagined Letter A', 'transition',
                                            'B',
-                                           'transition', 'Black Screen', 'transition', 'Black Screen', 'transition',
+                                           'transition', 'Black Screen', 'transition', 'Imagined Letter B', 'transition',
                                            'C',
-                                           'transition', 'Black Screen', 'transition', 'Black Screen', 'transition',
+                                           'transition', 'Black Screen', 'transition', 'Imagined Letter C', 'transition',
                                            'D',
-                                           'transition', 'Black Screen', 'transition', 'Black Screen', 'transition',
+                                           'transition', 'Black Screen', 'transition', 'Imagined Letter D', 'transition',
                                            'E',
-                                           'transition', 'Black Screen', 'transition', 'Black Screen', 'transition',
+                                           'transition', 'Black Screen', 'transition', 'Imagined Letter E', 'transition',
                                            'F',
-                                           'transition', 'Black Screen', 'transition', 'Black Screen', 'transition',
+                                           'transition', 'Black Screen', 'transition', 'Imagined Letter F', 'transition',
                                            'G',
-                                           'transition', 'Black Screen', 'transition', 'Black Screen', 'transition',
+                                           'transition', 'Black Screen', 'transition', 'Imagined Letter G', 'transition',
                                            'H',
-                                           'transition', 'Black Screen', 'transition', 'Black Screen', 'transition',
+                                           'transition', 'Black Screen', 'transition', 'Imagined Letter H', 'transition',
                                            'I',
-                                           'transition', 'Black Screen', 'transition', 'Black Screen', 'transition',
+                                           'transition', 'Black Screen', 'transition', 'Imagined Letter I', 'transition',
                                            'J',
-                                           'transition', 'Black Screen', 'transition', 'Black Screen', 'transition',
+                                           'transition', 'Black Screen', 'transition', 'Imagined Letter J', 'transition',
                                            'K',
-                                           'transition', 'Black Screen', 'transition', 'Black Screen', 'transition',
+                                           'transition', 'Black Screen', 'transition', 'Imagined Letter K', 'transition',
                                            'L',
-                                           'transition', 'Black Screen', 'transition', 'Black Screen', 'transition',
+                                           'transition', 'Black Screen', 'transition', 'Imagined Letter L', 'transition',
                                            'M',
-                                           'transition', 'Black Screen', 'transition', 'Black Screen', 'transition',
+                                           'transition', 'Black Screen', 'transition', 'Imagined Letter M', 'transition',
                                            'N',
-                                           'transition', 'Black Screen', 'transition', 'Black Screen', 'transition',
+                                           'transition', 'Black Screen', 'transition', 'Imagined Letter N', 'transition',
                                            'O',
-                                           'transition', 'Black Screen', 'transition', 'Black Screen', 'transition',
+                                           'transition', 'Black Screen', 'transition', 'Imagined Letter O', 'transition',
                                            'P',
-                                           'transition', 'Black Screen', 'transition', 'Black Screen', 'transition',
+                                           'transition', 'Black Screen', 'transition', 'Imagined Letter P', 'transition',
                                            'Q',
-                                           'transition', 'Black Screen', 'transition', 'Black Screen', 'transition',
+                                           'transition', 'Black Screen', 'transition', 'Imagined Letter Q', 'transition',
                                            'R',
-                                           'transition', 'Black Screen', 'transition', 'Black Screen', 'transition',
+                                           'transition', 'Black Screen', 'transition', 'Imagined Letter R', 'transition',
                                            'S',
-                                           'transition', 'Black Screen', 'transition', 'Black Screen', 'transition',
+                                           'transition', 'Black Screen', 'transition', 'Imagined Letter S', 'transition',
                                            'T',
-                                           'transition', 'Black Screen', 'transition', 'Black Screen', 'transition',
+                                           'transition', 'Black Screen', 'transition', 'Imagined Letter T', 'transition',
                                            'U',
-                                           'transition', 'Black Screen', 'transition', 'Black Screen', 'transition',
+                                           'transition', 'Black Screen', 'transition', 'Imagined Letter U', 'transition',
                                            'V',
-                                           'transition', 'Black Screen', 'transition', 'Black Screen', 'transition',
+                                           'transition', 'Black Screen', 'transition', 'Imagined Letter V', 'transition',
                                            'W',
-                                           'transition', 'Black Screen', 'transition', 'Black Screen', 'transition',
+                                           'transition', 'Black Screen', 'transition', 'Imagined Letter W', 'transition',
                                            'X',
-                                           'transition', 'Black Screen', 'transition', 'Black Screen', 'transition',
+                                           'transition', 'Black Screen', 'transition', 'Imagined Letter X', 'transition',
                                            'Y',
-                                           'transition', 'Black Screen', 'transition', 'Black Screen', 'transition',
+                                           'transition', 'Black Screen', 'transition', 'Imagined Letter Y', 'transition',
                                            'Z',
-                                           'transition', 'Black Screen', 'transition', 'Black Screen'
+                                           'transition', 'Black Screen', 'transition', 'Imagined Letter Z'
                                            ])
     raw.set_annotations(patient_annotations)
     print(raw.annotations)
@@ -139,15 +141,15 @@ def annotate_patient_info(filename, raw):
         end = annotation['onset'] + annotation['duration']
         print("'{}' goes from {} to {}".format(description, start, end))
 
-    # #plot annotated data
-    # fig = raw.plot()
-    # #allow modifications to annotations from plot window
-    # fig.fake_keypress('a')
+    #plot annotated data
+    fig = raw.plot()
+    #allow modifications to annotations from plot window
+    fig.fake_keypress('a')
 
-    raw.annotations.save('results/{}.csv'.format(str(filename)), overwrite=True)
+    raw.annotations.save('results/EEG_Data/{}/{}.csv'.format(os.path.dirname(file).split("\\")[1], os.path.basename(file)), overwrite=True)
 
 if __name__ == "__main__":
-  for nedf_file in pathlib.Path('EEG_Data/').glob('**/*.nedf'):
+  for nedf_file in glob.glob('EEG_Data/*/*.nedf'):
       patient_raw = mne.io.read_raw_nedf(str(nedf_file))
-      print_patient_info(nedf_file.stem, patient_raw)
-      annotate_patient_info(nedf_file.stem, patient_raw)
+      print_patient_info(patient_raw)
+      annotate_patient_info(nedf_file, patient_raw)
