@@ -5,9 +5,8 @@ Created on Thu Apr  7 23:29:00 2022
 @author: jenna
 """
 import glob
-import os.path
-
 import mne
+import os.path
 
 #see https://mne.tools/dev/auto_tutorials/raw/10_raw_overview.html#the-raw-info-attribute
 def print_patient_info(raw):
@@ -146,10 +145,15 @@ def annotate_patient_info(file, raw):
     #allow modifications to annotations from plot window
     fig.fake_keypress('a')
 
-    raw.annotations.save('results/EEG_Data/{}/{}.csv'.format(os.path.dirname(file).split("\\")[1], os.path.basename(file)), overwrite=True)
+    raw.annotations.save('results/EEG_Data/{}/{}.csv'.format(os.path.dirname(file).split("\\")[1], os.path.basename(file)), overwrite=False)
+
+    return raw
+
 
 if __name__ == "__main__":
   for nedf_file in glob.glob('EEG_Data/*/*.nedf'):
       patient_raw = mne.io.read_raw_nedf(str(nedf_file))
       print_patient_info(patient_raw)
-      annotate_patient_info(nedf_file, patient_raw)
+      raw_annotated = annotate_patient_info(nedf_file, patient_raw)
+      all_events, all_event_id = mne.events_from_annotations(raw_annotated)
+      print()
