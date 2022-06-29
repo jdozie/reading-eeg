@@ -145,7 +145,7 @@ def annotate_patient_info(file, raw):
     #allow modifications to annotations from plot window
     fig.fake_keypress('a')
 
-    raw.annotations.save('results/EEG_Data/{}/{}.csv'.format(os.path.dirname(file).split("\\")[1], os.path.basename(file)), overwrite=False)
+    raw.annotations.save('results/EEG_Data/{}/{}.csv'.format(os.path.dirname(file).split("\\")[1], os.path.basename(file)), overwrite=True)
 
     return raw
 
