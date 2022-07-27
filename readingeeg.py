@@ -5,8 +5,10 @@ Created on Thu Apr  7 23:29:00 2022
 @author: jenna
 """
 import glob
+import logging
 import mne
 import os.path
+
 
 #see https://mne.tools/dev/auto_tutorials/raw/10_raw_overview.html#the-raw-info-attribute
 def print_patient_info(raw):
@@ -15,16 +17,13 @@ def print_patient_info(raw):
   time_secs = raw.times
   ch_names = raw.ch_names
   n_chan = len(ch_names)      #note: there is no raw.n_channels attribute
-  print('the sample data object has {} time samples and {} channels.'''.format(n_time_stamps, n_chan))
-  print('the last time sample is at {} seconds.'.format(time_secs[-1]))
-  print('the first few channel names are {}'.format(', '.join(ch_names[:3])))
-  print()
-
-  print('bad channels: ', raw.info['bads'])  # channels marked "bad" during acquisition
-  print(raw.info['sfreq'], 'Hz')  # sampling frequency
-  print(raw.info['description'], '\n')  # misc acquisition info
-
-  print(raw.info)
+  log.info('the sample data object has {} time samples and {} channels.'''.format(n_time_stamps, n_chan))
+  log.info('the last time sample is at {} seconds.'.format(time_secs[-1]))
+  log.info('the first few channel names are {}'.format(', '.join(ch_names[:3])))
+  log.info('bad channels: {}'.format(raw.info['bads']))  # channels marked "bad" during acquisition
+  log.info(raw.info['sfreq'])  # sampling frequency
+  log.info(raw.info['description'])  # misc acquisition info
+  log.info(raw.info)
 
 def annotate_patient_info(file, raw):
     patient_annotations = mne.Annotations(onset=
@@ -77,73 +76,73 @@ def annotate_patient_info(file, raw):
                                            1, 5, 1, 5  # black screen, imagined letter Z
                                            ],
                                           description=
-                                          ['Eye Open', 'transition', 'Eye Closed', 'transition', 'A',
+                                          ['Eye Open', 'transition', 'Eye Closed', 'transition', 'Looked at Letter A',
                                            'transition', 'Black Screen', 'transition', 'Imagined Letter A', 'transition',
-                                           'B',
+                                           'Looked at Letter B',
                                            'transition', 'Black Screen', 'transition', 'Imagined Letter B', 'transition',
-                                           'C',
+                                           'Looked at Letter C',
                                            'transition', 'Black Screen', 'transition', 'Imagined Letter C', 'transition',
-                                           'D',
+                                           'Looked at Letter D',
                                            'transition', 'Black Screen', 'transition', 'Imagined Letter D', 'transition',
-                                           'E',
+                                           'Looked at Letter E',
                                            'transition', 'Black Screen', 'transition', 'Imagined Letter E', 'transition',
-                                           'F',
+                                           'Looked at Letter F',
                                            'transition', 'Black Screen', 'transition', 'Imagined Letter F', 'transition',
-                                           'G',
+                                           'Looked at Letter G',
                                            'transition', 'Black Screen', 'transition', 'Imagined Letter G', 'transition',
-                                           'H',
+                                           'Looked at Letter H',
                                            'transition', 'Black Screen', 'transition', 'Imagined Letter H', 'transition',
-                                           'I',
+                                           'Looked at Letter I',
                                            'transition', 'Black Screen', 'transition', 'Imagined Letter I', 'transition',
-                                           'J',
+                                           'Looked at Letter J',
                                            'transition', 'Black Screen', 'transition', 'Imagined Letter J', 'transition',
-                                           'K',
+                                           'Looked at Letter K',
                                            'transition', 'Black Screen', 'transition', 'Imagined Letter K', 'transition',
-                                           'L',
+                                           'Looked at Letter L',
                                            'transition', 'Black Screen', 'transition', 'Imagined Letter L', 'transition',
-                                           'M',
+                                           'Looked at Letter M',
                                            'transition', 'Black Screen', 'transition', 'Imagined Letter M', 'transition',
-                                           'N',
+                                           'Looked at Letter N',
                                            'transition', 'Black Screen', 'transition', 'Imagined Letter N', 'transition',
-                                           'O',
+                                           'Looked at Letter O',
                                            'transition', 'Black Screen', 'transition', 'Imagined Letter O', 'transition',
-                                           'P',
+                                           'Looked at Letter P',
                                            'transition', 'Black Screen', 'transition', 'Imagined Letter P', 'transition',
-                                           'Q',
+                                           'Looked at Letter Q',
                                            'transition', 'Black Screen', 'transition', 'Imagined Letter Q', 'transition',
-                                           'R',
+                                           'Looked at Letter R',
                                            'transition', 'Black Screen', 'transition', 'Imagined Letter R', 'transition',
-                                           'S',
+                                           'Looked at Letter S',
                                            'transition', 'Black Screen', 'transition', 'Imagined Letter S', 'transition',
-                                           'T',
+                                           'Looked at Letter T',
                                            'transition', 'Black Screen', 'transition', 'Imagined Letter T', 'transition',
-                                           'U',
+                                           'Looked at Letter U',
                                            'transition', 'Black Screen', 'transition', 'Imagined Letter U', 'transition',
-                                           'V',
+                                           'Looked at Letter V',
                                            'transition', 'Black Screen', 'transition', 'Imagined Letter V', 'transition',
-                                           'W',
+                                           'Looked at Letter W',
                                            'transition', 'Black Screen', 'transition', 'Imagined Letter W', 'transition',
-                                           'X',
+                                           'Looked at Letter X',
                                            'transition', 'Black Screen', 'transition', 'Imagined Letter X', 'transition',
-                                           'Y',
+                                           'Looked at Letter Y',
                                            'transition', 'Black Screen', 'transition', 'Imagined Letter Y', 'transition',
-                                           'Z',
+                                           'Looked at Letter Z',
                                            'transition', 'Black Screen', 'transition', 'Imagined Letter Z'
                                            ])
     raw.set_annotations(patient_annotations)
-    print(raw.annotations)
+    log.info(raw.annotations)
 
     #print annotation information
     for annotation in raw.annotations:
         description = annotation['description']
         start = annotation['onset']
         end = annotation['onset'] + annotation['duration']
-        print("'{}' goes from {} to {}".format(description, start, end))
+        log.info("'{}' goes from {} to {}".format(description, start, end))
 
-    #plot annotated data
-    fig = raw.plot()
-    #allow modifications to annotations from plot window
-    fig.fake_keypress('a')
+    # #plot annotated data
+    # fig = raw.plot()
+    # #allow modifications to annotations from plot window
+    # fig.fake_keypress('a')
 
     raw.annotations.save('results/EEG_Data/{}/{}.csv'.format(os.path.dirname(file).split("\\")[1], os.path.basename(file)), overwrite=True)
 
@@ -151,9 +150,14 @@ def annotate_patient_info(file, raw):
 
 
 if __name__ == "__main__":
-  for nedf_file in glob.glob('EEG_Data/*/*.nedf'):
-      patient_raw = mne.io.read_raw_nedf(str(nedf_file))
-      print_patient_info(patient_raw)
-      raw_annotated = annotate_patient_info(nedf_file, patient_raw)
-      all_events, all_event_id = mne.events_from_annotations(raw_annotated)
-      print()
+    logging.basicConfig(filename='info.log', format='%(levelname)s:%(message)s', level=logging.DEBUG)
+    log = logging.getLogger(__name__)
+    for nedf_file in glob.glob('EEG_Data/*/*.nedf'):
+        log.info("processing patient info for {}".format(nedf_file.title()))
+        patient_raw = mne.io.read_raw_nedf(str(nedf_file))
+        print_patient_info(patient_raw)
+        raw_annotated = annotate_patient_info(nedf_file, patient_raw)
+        all_events, all_event_id = mne.events_from_annotations(raw_annotated)
+        log.info("")
+    #kill program after processing all files
+    quit()
