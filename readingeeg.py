@@ -8,6 +8,14 @@ import glob
 import logging
 import mne
 import os.path
+import sys
+
+
+class Subject:
+    def __init__(self, filename, events, event_ids):
+        self.filename = filename
+        self.events = events
+        self.event_ids = event_ids
 
 
 #see https://mne.tools/dev/auto_tutorials/raw/10_raw_overview.html#the-raw-info-attribute
@@ -152,12 +160,21 @@ def annotate_patient_info(file, raw):
 if __name__ == "__main__":
     logging.basicConfig(filename='info.log', format='%(levelname)s:%(message)s', level=logging.DEBUG)
     log = logging.getLogger(__name__)
+    subjects = []
     for nedf_file in glob.glob('EEG_Data/*/*.nedf'):
         log.info("processing patient info for {}".format(nedf_file.title()))
         patient_raw = mne.io.read_raw_nedf(str(nedf_file))
         print_patient_info(patient_raw)
         raw_annotated = annotate_patient_info(nedf_file, patient_raw)
         all_events, all_event_id = mne.events_from_annotations(raw_annotated)
+        subjects.append(Subject(nedf_file.title(), all_events, all_event_id))
         log.info("")
+    for subject in subjects:
+        #get avg. for each letter
+        events = subject.events
+        #get avg. for each imagined letter
+        #compare avg. between seeing letter and imagining letter (can use euclidean distance or chi-square)
+        #plot topomames
+        #compare some letters that appear similar (example: M vs. W, B vs. D, E vs. F)
     #kill program after processing all files
-    quit()
+    sys.exit()
